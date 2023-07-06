@@ -1,13 +1,13 @@
-const button = document.querySelector("button");
+const button = document.querySelector("button")!;
 const input1 = document.getElementById("num1")! as HTMLInputElement;
 const input2 = document.getElementById("num2")! as HTMLInputElement;
 
-function add(num1: number, num2: number) {
+function add1(num1: number, num2: number) {
   return num1 + num2;
 }
 
 button.addEventListener("click", function () {
-  console.log(add(+input1.value, +input2.value));
+  console.log(add1(+input1.value, +input2.value));
 });
 
 // -----------  HW 2  -----------
@@ -42,10 +42,10 @@ anything = {};
 let some: unknown;
 some = "Text";
 
-let str: string;
+let str1: string;
 
 if (typeof some === "string") {
-  str = some;
+  str1 = some;
 }
 
 // Зробіть незмінний масив із суворо описаними типами. Масив для прикладу.

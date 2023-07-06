@@ -79,6 +79,7 @@ function combine(param1: string | number, param2: string | number) {
   if (typeof param1 === "string" || typeof param2 === "string") {
     return param1.toString() + param2.toString();
   }
+  return param1 + param2;
 }
 console.log(combine("str1", "str2"));
 
@@ -110,7 +111,7 @@ workWithArr(fruit, "beer", "delete");
 console.log(fruit);
 
 // ---------  function type + callback  ------------
-function calc(
+function calc1(
   num1: number,
   num2: number,
   callback: (arg1: number, arg2: number) => number
@@ -121,7 +122,7 @@ function calc(
 function foo(num1: number, num2: number) {
   return num1 + num2;
 }
-const result = calc(2, 5, foo);
+const result = calc1(2, 5, foo);
 
 console.log("result", result);
 
