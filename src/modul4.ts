@@ -122,7 +122,7 @@ class classAA {
 }
 
 //     ------    Класи та інтерфейси    -------
-class House {
+class House01 {
   street: string;
 
   constructor(n: string) {
@@ -134,16 +134,16 @@ class House {
   //   }
 
   // Ми вкажемо, якого типу повинен бути this в методі.
-  showAddress(this: House) {
+  showAddress(this: House01) {
     console.log("Address: " + this.street);
   }
 }
 
-const house = new House("Middle-earth");
+const house01 = new House01("Middle-earth");
 
-house.showAddress();
+house01.showAddress();
 
-const houseCopy = { street: "Dummy", showAddress: house.showAddress };
+const houseCopy = { street: "Dummy", showAddress: house01.showAddress };
 
 houseCopy.showAddress();
 
@@ -438,3 +438,69 @@ interface AddFunc {
 const foo1: AddFunc = (n1: number, n2: number) => {
   return n1 + n2;
 };
+
+////////////////////////////////////////////////////////
+//----------------- Homework--------------------------//
+
+class Key {
+  private signature: number;
+
+  constructor() {
+    this.signature = Math.random();
+  }
+  getSignature(): number {
+    return this.signature;
+  }
+}
+
+class Person {
+  constructor(private key: Key) {}
+
+  getKey(): Key {
+    return this.key;
+  }
+  // constructor(private key: number) {}
+
+  // getKey(): number {
+  //   return this.key;
+  // }
+}
+
+abstract class House {
+  protected door = false;
+  private tenants: Person[] = [];
+
+  key: Key;
+  constructor(k: Key) {
+    this.key = k;
+  }
+
+  comeIn(person: Person): void {
+    if (this.door) {
+      this.tenants.push(person);
+      console.log("Tenant is in House");
+    }
+    if (!this.door) {
+      throw new Error("The door is close");
+    }
+  }
+  public abstract openDoor(key: Key): boolean;
+}
+
+class MyHouse extends House {
+  public openDoor(key: Key) {
+    if (key.getSignature() !== this.key.getSignature()) {
+      throw new Error("Wrong key");
+    }
+    return (this.door = true);
+  }
+}
+
+const key = new Key();
+
+const house = new MyHouse(key);
+const person001 = new Person(key);
+
+house.openDoor(person001.getKey());
+
+house.comeIn(person001);
