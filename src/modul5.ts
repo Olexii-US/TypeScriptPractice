@@ -1,4 +1,4 @@
-//  ---------------------------------------
+//  Advanced types
 //  --------- intersection types ----------
 //  ---------------------------------------
 
@@ -146,3 +146,79 @@ const newPerson2: Person002 = {
   age: 35,
   country: "Ukraine",
 };
+
+//  ---------------------------------------
+//  ------------- optional chaining -------------
+//  ---------------------------------------
+// викор. поля яких нема в об'єкті
+interface Person003 {
+  name: string;
+  additionalInfo?: {
+    someInfo: string;
+  };
+}
+
+const user003: Person003 = {
+  name: "John",
+};
+
+// user003.additionalInfo.someInfo
+//так не працює, бо TS не знає чи там є щось, треба через іf або ?
+user003?.additionalInfo?.someInfo;
+
+//  ---------------------------------------
+//  ------------- nullish coalescing -------------
+//  ---------------------------------------
+// нульове злиття // ?? спарьов лише коли null чи underfined
+const userInput = "";
+const srote = userInput || "DEFAULT";
+console.log(srote); // буде "DEFAULT"
+// а якщо ми хочемо "", то є ?? - тепер дефолт буде лише при null чи underfined
+
+const userInput1 = "";
+const srote1 = userInput ?? "DEFAULT";
+console.log(srote1); // буде ""
+
+//  ---------------------------------------
+//  ---------- function overloads ----------
+//  ---------------------------------------
+// перегрузка операторів // уточнення типу для функції
+
+function add1(a: number, b: number): number;
+function add1(a: string, b: string): string;
+function add1(a: string | number, b: string | number) {
+  if (typeof a === "string" || typeof b === "string") {
+    return a.toString() + b.toString();
+  }
+  return a + b;
+}
+// але TS не знає що ферне ця функція, того перед нею уточнюємо
+
+//  ---------------------------------------
+//  ---------------------------------------
+//  ---------- Generics ---------- узагальн. тип- -----
+//  ---------------------------------------
+// щоб наприклад зберігати масив чисел і строк
+
+let arr: Array<string | number>; // повний запис
+let arr1: (string | number)[]; // короткий запис, але не прац. з промісами
+
+arr = [5, "hi"];
+
+const promise1 = new Promise((resolve) => {
+  resolve("string");
+});
+// promise1.then((data) => {
+//   // data unnown
+// });
+
+// того треба так:
+const promise: Promise<string> = new Promise((resolve) => {
+  resolve("string");
+});
+promise.then((data) => {});
+
+//  ---------------------------------------
+//  ---------- Generics function method ----------
+//  ---------------------------------------
+//
