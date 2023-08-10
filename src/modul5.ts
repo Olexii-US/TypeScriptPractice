@@ -222,3 +222,173 @@ promise.then((data) => {});
 //  ---------- Generics function method ----------
 //  ---------------------------------------
 //
+function merge(objA: object, objB: object) {
+  return Object.assign({}, objA, objB);
+}
+
+const toMerge1 = {
+  name: "Ann",
+};
+
+const toMerge2 = {
+  age: 5,
+};
+
+const merged = merge(toMerge1, toMerge2);
+
+// merged.name;
+//так не працює, бо не знає що за обєкти
+// тому або:
+const merged1 = merge(toMerge1, toMerge2) as { name: string; age: number }; //але це поганий варіант, бо треба увесь час вказувати при возові
+merged1.name;
+
+// тому краще дженеріки:
+function mergeGeneric<T, U>(objA: T, objB: U) {
+  return Object.assign({}, objA, objB);
+}
+
+const toMerge01 = {
+  name: "Ann",
+};
+
+const toMerge02 = {
+  age: 5,
+};
+
+const mergedGeneric = mergeGeneric(toMerge1, toMerge2);
+mergedGeneric.name;
+
+// ще можна вказати тип при визові дженеріка
+function mergeGeneric1<T, U>(objA: T, objB: U) {
+  return Object.assign({}, objA, objB);
+}
+
+type Persom = {
+  name: string;
+};
+type AdditionalFields = {
+  age: number;
+};
+
+const toMerge011 = {
+  name: "Ann",
+};
+
+const toMerge021 = {
+  age: 5,
+};
+
+const mergedGeneric1 = mergeGeneric1<Persom, AdditionalFields>(
+  toMerge1,
+  toMerge2
+);
+mergedGeneric.name;
+
+//  ---------------------------------------
+//  ---------- Extends ----------
+//  ---------------------------------------
+// для обмеження типу, розшируювати дженеріки від якого типу унаслідуються
+// зазвич букви T та U
+
+function mergeExt<T extends object, U extends object>(objA: T, objB: U) {
+  return Object.assign({}, objA, objB);
+} // extends object щоб можнв було передати лише об'єкт, а не строку напримклад
+
+const toMergeExt1 = {
+  name: "Ann",
+};
+
+const toMergeExt2 = {
+  age: 5,
+};
+
+const mergedExt = mergeExt(toMergeExt1, toMergeExt2);
+// const mergedExtString = mergeExt("hi", "hello"); // error
+mergedExt.name;
+
+///////// ---- приклад 2
+
+// function getLength(str): number {
+//   return str.length;
+// } // так не працює, можна вказати, що str:string, але тоді з масивом працювати не буде, того треба інтерфейс і дженеріки
+interface ILength {
+  length: number;
+}
+
+function getLength<T extends ILength>(str: T): number {
+  return str.length;
+}
+getLength("string");
+getLength(["string"]);
+// getLength(5); error
+const obj1 = {
+  length: 10,
+};
+getLength(obj1); //все ок бо є поле length
+
+//  ---------------------------------------
+//  --------------- keyof---------------
+//  ---------------------------------------
+// чи є якесь поле в цьому типі чи об'єкті
+function extractValue<T extends object, U extends keyof T>(obj: T, key: U) {
+  return obj[key];
+}
+const field = extractValue({ name: "ann" }, "name");
+
+//  ---------------------------------------
+//  --------------- Generic Classes---------------
+//  ---------------------------------------
+// стейти і пропси в React так передаються теж
+
+class DataStore<T> {
+  private data: T[] = [];
+
+  addItem(item: T): void {
+    this.data.push(item);
+  }
+  getItems(): T[] {
+    return this.data;
+  }
+}
+
+interface IPersonStore {
+  name: string;
+}
+
+const storeUsers = new DataStore<IPersonStore>();
+
+storeUsers.addItem({
+  name: "max",
+});
+storeUsers.addItem({
+  name: "ann",
+});
+console.log(storeUsers.getItems());
+
+const ageStore = new DataStore<number>();
+
+ageStore.addItem(21);
+ageStore.addItem(30);
+
+//  --------------Utility types---------------
+//  --------------- Partial---------------
+//  -не часто--------------------------------------
+// якщо я обовязкові поля але не можемо зразу їх заповнити
+interface IUser {
+  name: string;
+  age: number;
+}
+
+function createPerson(name: string): IUser {
+  const person: Partial<IUser> = {
+    name,
+  };
+  person.age = 20;
+
+  return person as IUser;
+}
+
+//  --------------Utility types---------------
+//  --------------- Readonly---------------
+//  ---------------------------------------
+//
