@@ -391,4 +391,25 @@ function createPerson(name: string): IUser {
 //  --------------Utility types---------------
 //  --------------- Readonly---------------
 //  ---------------------------------------
-//
+// можна створ наприклад незмінний масив
+
+const arr002: Readonly<string[]> = ["One", "Two", "Three"];
+
+// arr002.push("four") // не працює
+// arr002.pop("Two");// не працює
+// так само і з обєктом і з іншиим
+
+//  --------------Utility types---------------
+//  --------------- Pick---------------
+//  ---------------------------------------
+// якщо треба частини від типу
+interface Page {
+  title: string;
+  annotation: string;
+  numberPage: number;
+}
+
+const pageAnnotation: Pick<Page, "annotation" | "numberPage"> = {
+  annotation: "small page",
+  numberPage: 5,
+};
