@@ -39,7 +39,7 @@ interface AdminUser extends Admin, User {}
 
 type ComplexTypes = string | number;
 
-function combine(a: ComplexTypes, b: ComplexTypes) {
+function combine1(a: ComplexTypes, b: ComplexTypes) {
   if (typeof a === "string" || typeof b === "string") {
     return a.toString() + b.toString();
   }
@@ -184,9 +184,9 @@ console.log(srote1); // буде ""
 //  ---------------------------------------
 // перегрузка операторів // уточнення типу для функції
 
-function add1(a: number, b: number): number;
-function add1(a: string, b: string): string;
-function add1(a: string | number, b: string | number) {
+function add11(a: number, b: number): number;
+function add11(a: string, b: string): string;
+function add11(a: string | number, b: string | number) {
   if (typeof a === "string" || typeof b === "string") {
     return a.toString() + b.toString();
   }
@@ -216,7 +216,9 @@ const promise1 = new Promise((resolve) => {
 const promise: Promise<string> = new Promise((resolve) => {
   resolve("string");
 });
-promise.then((data) => {});
+promise.then((data) => {
+  console.log(data);
+});
 
 //  ---------------------------------------
 //  ---------- Generics function method ----------
@@ -413,3 +415,57 @@ const pageAnnotation: Pick<Page, "annotation" | "numberPage"> = {
   annotation: "small page",
   numberPage: 5,
 };
+
+//  ----------------------------------------------------
+///////////////////////-HW-/////////////////////////////
+//----------------- Homework--------------------------//
+//--01---
+function getPromise(): Promise<Array<string | number>> {
+  return new Promise((resolve) => {
+    resolve(["Text", 50]);
+  });
+}
+
+getPromise().then((data) => {
+  console.log(data);
+});
+
+//--02---
+type AllType = {
+  name: string;
+  position: number;
+  color: string;
+  weight: number;
+};
+
+function compare01(
+  top: Pick<AllType, "name" | "color">,
+  bottom: Pick<AllType, "position" | "weight">
+): AllType {
+  return {
+    name: top.name,
+    color: top.color,
+    position: bottom.position,
+    weight: bottom.weight,
+  };
+}
+
+//--03---
+function merge002<T extends object, U extends object>(objA: T, objB: U) {
+  return Object.assign(objA, objB);
+}
+
+//--04---
+class Component<T> {
+  constructor(public props: T) {}
+}
+
+interface IHeader {
+  title: string;
+}
+
+class Page extends Component<IHeader> {
+  pageInfo() {
+    console.log(this.props.title);
+  }
+}

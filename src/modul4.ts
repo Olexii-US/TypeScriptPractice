@@ -348,14 +348,14 @@ console.log(corn.startEngine());
 console.log(boeing.startEngine());
 
 // інтерфейси об'єктів
-interface IUser {
+interface IUser01 {
   readonly userName: string;
   userAge: number;
 
   greet(phrase: string): void;
 }
 
-let newUser: IUser;
+let newUser: IUser01;
 
 newUser = {
   userName: "Max",
