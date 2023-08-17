@@ -188,3 +188,152 @@ console.log("Amount with tax: ", payment.pay(100));
 //  ---------------------------------------
 //  ------------- Декоратори параметрів -------------
 //  ---------------------------------------
+// function CheckEmail(target: any, name: string, position: number) {
+//   console.log("target", target);
+//   console.log("position", position);
+//   console.log("name", name);
+// }
+
+// class Person1 {
+//   setEmail(@CheckEmail email: string) {
+//     console.log(email);
+//   }
+// }
+
+//
+function CheckEmail(target: any, nameMethod: string, position: number) {
+  if (!target[nameMethod].validation) {
+    target[nameMethod].validation = {};
+  }
+  Object.assign(target[nameMethod].validation, {
+    [position]: (value: string) => {
+      if (value.includes("@")) {
+        return value;
+      }
+      throw new Error("No valid field");
+    },
+  });
+}
+
+function Validation(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const method = descriptor.value;
+
+  return {
+    configurable: true,
+    enumerable: false,
+    get() {
+      return (...args: any[]) => {
+        if (method.validation) {
+          args.forEach((item, index) => {
+            if (method.validation[index]) {
+              args[index] = method.validation[index](item);
+            }
+          });
+        }
+        return method.apply(this, args);
+      };
+    },
+  };
+}
+
+class Person1 {
+  @Validation
+  setEmail(@CheckEmail email: string) {
+    console.log(email);
+  }
+}
+
+const person033 = new Person1();
+
+person033.setEmail("testgmail.com");
+person033.setEmail("test@gmail.com");
+
+//  ---------------------------------------
+//  ------------- Декоратори властивостей -------------
+//  ---------------------------------------
+function Required(target: any, propertyName: string | Symbol) {
+  console.log("Required");
+  console.log(target, propertyName);
+}
+
+function PositiveNumber(target: any, propertyName: string | Symbol) {
+  console.log("PositiveNumber");
+  console.log(target, propertyName);
+}
+
+class Person777 {
+  @Required
+  name: string;
+  @PositiveNumber
+  age: number;
+
+  constructor(n: string, a: number) {
+    this.name = n;
+    this.age = a;
+  }
+}
+
+//складний приклад
+interface ValidatorConfig {
+  [property: string]: {
+    [validatableProp: string]: string[]; // ['required', 'positive']
+  };
+}
+
+const registeredValidators: ValidatorConfig = {};
+
+function Required007(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ["required"],
+  };
+}
+
+function PositiveNumber007(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ["positive"],
+  };
+}
+
+function validate(obj: any) {
+  const objValidatorConfig = registeredValidators[obj.constructor.name];
+  if (!objValidatorConfig) {
+    return true;
+  }
+  let isValid = true;
+  for (const prop in objValidatorConfig) {
+    for (const validator of objValidatorConfig[prop]) {
+      switch (validator) {
+        case "required":
+          isValid = isValid && !!obj[prop];
+          break;
+        case "positive":
+          isValid = isValid && obj[prop] > 0;
+          break;
+      }
+    }
+  }
+  return isValid;
+}
+
+class Person007 {
+  @Required007
+  name: string;
+  @PositiveNumber007
+  age: number;
+
+  constructor(n: string, a: number) {
+    this.name = n;
+    this.age = a;
+  }
+}
+
+// const person007 = new Person007("", -1);
+const person0077 = new Person007("Jane", 5);
+
+if (!validate(person0077)) {
+  console.log("Validation error!");
+} else {
+  console.log("Validation ok!");
+}
